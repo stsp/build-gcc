@@ -4,7 +4,7 @@ source script/init.sh
 
 case $TARGET in
 *-msdosdjgpp) ;;
-*) TARGET="i586-pc-msdosdjgpp" ;;
+*) TARGET="i686-pc-msdosdjgpp" ;;
 esac
 
 #DJGPP_DOWNLOAD_BASE="ftp://ftp.delorie.com/pub"
