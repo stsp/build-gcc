@@ -32,13 +32,14 @@ if [ -z $1 ]; then
 fi
 
 while [ ! -z $1 ]; do
-  if [ ! -x djgpp/$1 ] && [ ! -x common/$1 ]; then
-    echo "Unsupported package: $1"
+  PKG="$1"
+  shift
+  if [ ! -x djgpp/$PKG ] && [ ! -x common/$PKG ]; then
+    echo "Unsupported package: $PKG"
     exit 1
   fi
 
-  [ -e djgpp/$1 ] && source djgpp/$1 || source common/$1
-  shift
+  [ -e djgpp/$PKG ] && source djgpp/$PKG || source common/$PKG
 done
 
 DEPS=""
@@ -117,9 +118,14 @@ fi
 
 cd ${BASE}/build/ || exit 1
 
-if [ ! -z ${DJGPP_VERSION} ]; then
+if [ -n "${DJGPP_VERSION}" ]; then
   if [ "${DJGPP_VERSION}" == "cvs" ]; then
-    download_git https://github.com/jwt27/djgpp-cvs.git jwt27
+    if [ -z "${DJGPP_GIT_PATH}" ]; then
+      download_git ${DJGPP_GIT_URL} ${DJGPP_GIT_BRANCH}
+    else
+      rm -rf djgpp-cvs
+      ln -sf "${DJGPP_GIT_PATH}" djgpp-cvs
+    fi
     cd djgpp-cvs
   else
     echo "Unpacking djgpp..."
