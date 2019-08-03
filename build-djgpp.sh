@@ -311,7 +311,7 @@ if [ ! -z ${DJGPP_VERSION} ]; then
   ${MAKE} -j${MAKE_JOBS} -C libemu || exit 1
   ${MAKE} -j${MAKE_JOBS} -C libm || exit 1
   ${MAKE} -j${MAKE_JOBS} -C docs || exit 1
-  ${MAKE} -j${MAKE_JOBS} -C ../zoneinfo/src
+#  ${MAKE} -j${MAKE_JOBS} -C ../zoneinfo/src
   ${MAKE} -j${MAKE_JOBS} -f makempty || exit 1
   CFLAGS="$TEMP_CFLAGS"
   cd ..
@@ -321,7 +321,7 @@ if [ ! -z ${DJGPP_VERSION} ]; then
   ${SUDO} cp -p hostbin/exe2coff.exe $PREFIX/bin/${TARGET}-exe2coff${EXE} || exit 1
   ${SUDO} cp -p hostbin/djasm.exe $PREFIX/bin/${TARGET}-djasm${EXE} || exit 1
   ${SUDO} cp -p hostbin/dxegen.exe  $PREFIX/bin/${TARGET}-dxegen${EXE} || exit 1
-  ${SUDO} ln -s $PREFIX/bin/${TARGET}-dxegen${EXE} $PREFIX/bin/${TARGET}-dxe3gen${EXE} || exit 1
+  ${SUDO} ln -sf $PREFIX/bin/${TARGET}-dxegen${EXE} $PREFIX/bin/${TARGET}-dxe3gen${EXE} || exit 1
   ${SUDO} cp -p hostbin/dxe3res.exe $PREFIX/bin/${TARGET}-dxe3res${EXE} || exit 1
   ${SUDO} mkdir -p ${PREFIX}/${TARGET}/share/info
   ${SUDO} cp -rp info/* ${PREFIX}/${TARGET}/share/info
