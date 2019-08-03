@@ -65,7 +65,8 @@ download_git()
   local repo=$(basename $1)
   repo=${repo%.*}
   echo "Downloading ${repo}..."
-  [ -d $repo ] || git clone $1 --depth 1 $([ "$2" != "" ] && echo "--branch $2")
+  [ -d $repo ] || git clone $1 --depth 1 \
+    $([ "$2" != "" ] && echo "--branch $2") || exit 1
   cd $repo || exit 1
   git reset --hard HEAD
   git checkout $2

@@ -1,3 +1,23 @@
 #!/usr/bin/env bash
 
 export DJGPP_VERSION=cvs
+if [ "$1" = "-path" ]; then
+    shift
+    DJGPP_GIT_PATH="$1"
+    shift
+    return
+fi
+if [ "$1" != "-url" ]; then
+    export DJGPP_GIT_URL=https://github.com/jwt27/djgpp-cvs.git
+else
+    shift
+    export DJGPP_GIT_URL="$1"
+    shift
+fi
+if [ "$1" != "-branch" ]; then
+    export DJGPP_GIT_BRANCH=jwt27
+else
+    shift
+    export DJGPP_GIT_BRANCH="$1"
+    shift
+fi
