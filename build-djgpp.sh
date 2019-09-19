@@ -261,6 +261,7 @@ if [ ! -z ${GCC_VERSION} ]; then
     sleep 5
   fi
 
+  mkdir -p $BUILDDIR/tmpinst/bin
   cp $PREFIX/bin/${TARGET}-stubify $BUILDDIR/tmpinst/bin/stubify || exit 1
 
   ${MAKE} -j${MAKE_JOBS} all-gcc || exit 1
