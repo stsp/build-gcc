@@ -50,10 +50,10 @@ if [ ! -z ${AVRLIBC_VERSION} ]; then
 fi
 echo ""
 
-mkdir -p ${PREFIX}
+mkdir -p ${destdir}${PREFIX}
 
-if [ ! -d ${PREFIX} ] || [ ! -w ${PREFIX} ]; then
-  echo "WARNING: no write access to ${PREFIX}."
+if [ ! -d ${destdir}${PREFIX} ] || [ ! -w ${destdir}${PREFIX} ]; then
+  echo "WARNING: no write access to ${destdir}${PREFIX}."
   echo "You may need to enter your sudo password several times during the build process."
   echo ""
   SUDO=sudo
@@ -137,11 +137,11 @@ for ARCHIVE in $ARCHIVE_LIST; do
 done
 cd ..
 
-echo "Creating install directory: ${PREFIX}"
-[ -d ${PREFIX} ] || ${SUDO} mkdir -p ${PREFIX} || exit 1
-[ -d ${PREFIX}/${TARGET}/etc/ ] || ${SUDO} mkdir -p ${PREFIX}/${TARGET}/etc/ || exit 1
+echo "Creating install directory: ${destdir}${PREFIX}"
+[ -d ${destdir}${PREFIX} ] || ${SUDO} mkdir -p ${destdir}${PREFIX} || exit 1
+[ -d ${destdir}${PREFIX}/${TARGET}/etc/ ] || ${SUDO} mkdir -p ${destdir}${PREFIX}/${TARGET}/etc/ || exit 1
 
-export PATH="${PREFIX}/bin:$PATH"
+export PATH="${destdir}${PREFIX}/bin:$PATH"
 
 rm -rf ${BASE}/tests
 mkdir -p ${BASE}/tests

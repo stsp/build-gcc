@@ -2,7 +2,7 @@ test -n "$DJGPP_VERSION" || return
 
 echo "Copy long name executables to short name."
 (
-  cd $PREFIX || exit 1
+  cd ${destdir}$PREFIX || exit 1
   ${SUDO} mkdir -p ${TARGET}/bin
   SHORT_NAME_LIST="gcc g++ c++ addr2line c++filt cpp size strings dxegen dxe3gen dxe3res exe2coff stubify stubedit gdb djasm"
   for SHORT_NAME in $SHORT_NAME_LIST; do
@@ -44,11 +44,11 @@ do
   case $x in
     c++)
       echo "Testing C++ compiler: "
-      ($PREFIX/bin/${TARGET}-c++ ../hello-cpp.cpp -o hello-cpp && echo "PASS") || echo "FAIL"
+      (${destdir}$PREFIX/bin/${TARGET}-c++ ../hello-cpp.cpp -o hello-cpp && echo "PASS") || echo "FAIL"
       ;;
     c)
       echo "Testing C compiler: "
-      ($PREFIX/bin/${TARGET}-gcc ../hello.c -o hello && echo "PASS") || echo "FAIL"
+      (${destdir}$PREFIX/bin/${TARGET}-gcc ../hello.c -o hello && echo "PASS") || echo "FAIL"
       ;;
   esac
 done

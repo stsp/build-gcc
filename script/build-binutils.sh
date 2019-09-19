@@ -3,7 +3,7 @@ cd build-${TARGET} || exit 1
 
 echo "Building binutils"
 
-BINUTILS_CONFIGURE_OPTIONS+=" --target=${TARGET} --prefix=${PREFIX} ${HOST_FLAG} ${BUILD_FLAG}"
+BINUTILS_CONFIGURE_OPTIONS+=" --target=${TARGET} --prefix=$BUILDDIR/tmpinst${PREFIX} ${HOST_FLAG} ${BUILD_FLAG}"
 strip_whitespace BINUTILS_CONFIGURE_OPTIONS
 
 if [ ! -e configure-prefix ] || [ ! "`cat configure-prefix`" = "${BINUTILS_CONFIGURE_OPTIONS}" ]; then
@@ -28,5 +28,5 @@ ${MAKE} -j${MAKE_JOBS} || exit 1
 echo "Installing binutils"
 ${SUDO} ${MAKE} -j${MAKE_JOBS} install || exit 1
 
-${SUDO} rm -f ${PREFIX}/${TARGET}/etc/binutils-*-installed
-${SUDO} touch ${PREFIX}/${TARGET}/etc/binutils-${BINUTILS_VERSION}-installed
+${SUDO} rm -f ${destdir}${PREFIX}/${TARGET}/etc/binutils-*-installed
+${SUDO} touch ${destdir}${PREFIX}/${TARGET}/etc/binutils-${BINUTILS_VERSION}-installed

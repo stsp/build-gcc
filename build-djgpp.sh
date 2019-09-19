@@ -58,22 +58,22 @@ if [ -z ${IGNORE_DEPENDENCIES} ]; then
           && source djgpp/djgpp
         ;;
       binutils)
-        [ -z "`ls ${PREFIX}/${TARGET}/etc/binutils-*-installed 2> /dev/null`" ] \
+        [ -z "`ls ${destdir}${PREFIX}/${TARGET}/etc/binutils-*-installed 2> /dev/null`" ] \
           && [ -z ${BINUTILS_VERSION} ] \
           && source djgpp/binutils
         ;;
       gcc)
-        [ -z "`ls ${PREFIX}/${TARGET}/etc/gcc-*-installed 2> /dev/null`" ] \
+        [ -z "`ls ${destdir}${PREFIX}/${TARGET}/etc/gcc-*-installed 2> /dev/null`" ] \
           && [ -z ${GCC_VERSION} ] \
           && source common/gcc
         ;;
       gdb)
-        [ -z "`ls ${PREFIX}/${TARGET}/etc/gdb-*-installed 2> /dev/null`" ] \
+        [ -z "`ls ${destdir}${PREFIX}/${TARGET}/etc/gdb-*-installed 2> /dev/null`" ] \
           && [ -z ${GDB_VERSION} ] \
           && source common/gdb
         ;;
       dxegen)
-        [ -z "`ls ${PREFIX}/${TARGET}/etc/dxegen-installed 2> /dev/null`" ] \
+        [ -z "`ls ${destdir}${PREFIX}/${TARGET}/etc/dxegen-installed 2> /dev/null`" ] \
           && [ -z ${BUILD_DXEGEN} ] \
           && source djgpp/dxegen
         ;;
@@ -92,6 +92,7 @@ source ${BASE}/script/download.sh
 source ${BASE}/script/build-tools.sh
 
 cd ${BASE}/build/ || exit 1
+BUILDDIR=`pwd`
 
 if [ ! -z ${BINUTILS_VERSION} ]; then
   mkdir -p bnu${BINUTILS_VERSION}s
@@ -154,12 +155,18 @@ if [ -n "${DJGPP_VERSION}" ]; then
   *) EXE= ;;
   esac
 
-  echo "Installing djgpp headers"
-  ${SUDO} mkdir -p $PREFIX/${TARGET}/sys-include || exit 1
-  ${SUDO} cp -rp include/* $PREFIX/${TARGET}/sys-include/ || exit 1
-  ${SUDO} mkdir -p $PREFIX/bin || exit 1
-  ${SUDO} cp -p hostbin/stubify.exe $PREFIX/bin/${TARGET}-stubify${EXE} || exit 1
-  ${SUDO} cp -p hostbin/stubedit.exe $PREFIX/bin/${TARGET}-stubedit${EXE} || exit 1
+  echo "Installing djgpp headers (stage 1)"
+  ${SUDO} mkdir -p ${BUILDDIR}/tmpinst$PREFIX/${TARGET}/sys-include || exit 1
+  ${SUDO} cp -rp include/* ${BUILDDIR}/tmpinst$PREFIX/${TARGET}/sys-include/ || exit 1
+  ${SUDO} mkdir -p ${BUILDDIR}/tmpinst$PREFIX/bin || exit 1
+  ${SUDO} cp -p hostbin/stubify.exe ${BUILDDIR}/tmpinst$PREFIX/bin/${TARGET}-stubify${EXE} || exit 1
+  ${SUDO} cp -p hostbin/stubedit.exe ${BUILDDIR}/tmpinst$PREFIX/bin/${TARGET}-stubedit${EXE} || exit 1
+  echo "Installing djgpp headers (stage 2)"
+  ${SUDO} mkdir -p ${destdir}$PREFIX/${TARGET}/sys-include || exit 1
+  ${SUDO} cp -rp include/* ${destdir}$PREFIX/${TARGET}/sys-include/ || exit 1
+  ${SUDO} mkdir -p ${destdir}$PREFIX/bin || exit 1
+  ${SUDO} cp -p hostbin/stubify.exe ${destdir}$PREFIX/bin/${TARGET}-stubify${EXE} || exit 1
+  ${SUDO} cp -p hostbin/stubedit.exe ${destdir}$PREFIX/bin/${TARGET}-stubedit${EXE} || exit 1
 fi
 
 cd ${BASE}/build/
@@ -168,17 +175,18 @@ if [ ! -z ${GCC_VERSION} ]; then
   # build gcc
   untar ${DJCROSS_GCC_ARCHIVE} || exit 1
   cd djcross-gcc-${GCC_VERSION}/
+  SRCDIR=`pwd`
 
-  BUILDDIR=`pwd`
-  export PATH="${BUILDDIR}/tmpinst/bin:$PATH"
+  export PATH="${BUILDDIR}/tmpinst/bin:${BUILDDIR}/tmpinst${PREFIX}/bin:$PATH"
 
   if [ ! -e ${BUILDDIR}/tmpinst/autoconf-${AUTOCONF_VERSION}-built ]; then
     echo "Building autoconf"
-    cd $BUILDDIR
+    cd $SRCDIR
     untar ${AUTOCONF_ARCHIVE} || exit 1
     cd autoconf-${AUTOCONF_VERSION}/
-      ./configure --prefix=$BUILDDIR/tmpinst || exit 1
-      ${MAKE} -j${MAKE_JOBS} all install || exit 1
+    ./configure --prefix=$BUILDDIR/tmpinst || exit 1
+    ${MAKE} -j${MAKE_JOBS} all || exit 1
+    ${MAKE} -j${MAKE_JOBS} install || exit 1
     rm ${BUILDDIR}/tmpinst/autoconf-*-built
     touch ${BUILDDIR}/tmpinst/autoconf-${AUTOCONF_VERSION}-built
   else
@@ -187,18 +195,19 @@ if [ ! -z ${GCC_VERSION} ]; then
 
   if [ ! -e ${BUILDDIR}/tmpinst/automake-${AUTOMAKE_VERSION}-built ]; then
     echo "Building automake"
-    cd $BUILDDIR
+    cd $SRCDIR
     untar ${AUTOMAKE_ARCHIVE} || exit 1
     cd automake-${AUTOMAKE_VERSION}/
     ./configure --prefix=$BUILDDIR/tmpinst || exit 1
-      ${MAKE} all install || exit 1
+    ${MAKE} all || exit 1
+    ${MAKE} install || exit 1
     rm ${BUILDDIR}/tmpinst/automake-*-built
     touch ${BUILDDIR}/tmpinst/automake-${AUTOMAKE_VERSION}-built
   else
     echo "automake already built, skipping."
   fi
 
-  cd $BUILDDIR
+  cd $SRCDIR
 
   if [ ! -e gcc-unpacked ]; then
     rm -rf $BUILDDIR/gnu/
@@ -223,8 +232,6 @@ if [ ! -z ${GCC_VERSION} ]; then
     sed -i "s/[^^]@\(\(tex\)\|\(end\)\)/\n@\1/g" gcc.texi || exit 1
     cd -
 
-    cd $BUILDDIR/
-
     # download mpc/gmp/mpfr/isl libraries
     echo "Downloading gcc dependencies"
     cd gnu/gcc-${GCC_VERSION} || exit 1
@@ -248,13 +255,13 @@ if [ ! -z ${GCC_VERSION} ]; then
   TEMP_CFLAGS="$CFLAGS"
   export CFLAGS="$CFLAGS $GCC_EXTRA_CFLAGS"
 
-  GCC_CONFIGURE_OPTIONS+=" --target=${TARGET} --prefix=${PREFIX} ${HOST_FLAG} ${BUILD_FLAG}
+  GCC_CONFIGURE_OPTIONS+=" --target=${TARGET} ${HOST_FLAG} ${BUILD_FLAG}
                            --enable-languages=${ENABLE_LANGUAGES}"
   strip_whitespace GCC_CONFIGURE_OPTIONS
 
   if [ ! -e configure-prefix ] || [ ! "`cat configure-prefix`" == "${GCC_CONFIGURE_OPTIONS}" ]; then
     rm -rf *
-    eval "../gnu/gcc-${GCC_VERSION}/configure ${GCC_CONFIGURE_OPTIONS}" || exit 1
+    eval "../gnu/gcc-${GCC_VERSION}/configure --prefix=$BUILDDIR/tmpinst${PREFIX} ${GCC_CONFIGURE_OPTIONS}" || exit 1
     echo ${GCC_CONFIGURE_OPTIONS} > configure-prefix
   else
     echo "Note: gcc already configured. To force a rebuild, use: rm -rf $(pwd)"
@@ -262,7 +269,7 @@ if [ ! -z ${GCC_VERSION} ]; then
   fi
 
   mkdir -p $BUILDDIR/tmpinst/bin
-  cp $PREFIX/bin/${TARGET}-stubify $BUILDDIR/tmpinst/bin/stubify || exit 1
+  cp ${destdir}$PREFIX/bin/${TARGET}-stubify $BUILDDIR/tmpinst/bin/stubify || exit 1
 
   ${MAKE} -j${MAKE_JOBS} all-gcc || exit 1
   echo "Installing gcc (stage 1)"
@@ -283,19 +290,25 @@ if [ ! -z ${DJGPP_VERSION} ]; then
   ${MAKE} -j${MAKE_JOBS} -C mkdoc || exit 1
   ${MAKE} -j${MAKE_JOBS} -C libc || exit 1
 
-  echo "Installing djgpp libc"
-  ${SUDO} mkdir -p ${PREFIX}/${TARGET}/lib
-  ${SUDO} cp -rp ../lib/* $PREFIX/${TARGET}/lib || exit 1
+  echo "Installing djgpp libc (stage 1)"
+  ${SUDO} mkdir -p $BUILDDIR/tmpinst${PREFIX}/${TARGET}/lib
+  ${SUDO} cp -rp ../lib/* $BUILDDIR/tmpinst$PREFIX/${TARGET}/lib || exit 1
+  CFLAGS="$TEMP_CFLAGS"
+  echo "Installing djgpp libc (stage 2)"
+  ${SUDO} mkdir -p ${destdir}${PREFIX}/${TARGET}/lib
+  ${SUDO} cp -rp ../lib/* ${destdir}$PREFIX/${TARGET}/lib || exit 1
   CFLAGS="$TEMP_CFLAGS"
 fi
 
 if [ ! -z ${GCC_VERSION} ]; then
   echo "Building gcc (stage 2)"
-  cd $BUILDDIR/djcross || exit 1
+  cd $SRCDIR/djcross || exit 1
 
   TEMP_CFLAGS="$CFLAGS"
   export CFLAGS="$CFLAGS $GCC_EXTRA_CFLAGS"
-  ${MAKE} -j${MAKE_JOBS} || exit 1
+#  ${MAKE} -j${MAKE_JOBS} || exit 1
+  # parallel build doesn't seem to work here
+  ${MAKE} || exit 1
   [ ! -z $MAKE_CHECK_GCC ] && ${MAKE} -j${MAKE_JOBS} -s check-gcc | tee ${BASE}/tests/gcc.log
   echo "Installing gcc (stage 2)"
   ${SUDO} ${MAKE} -j${MAKE_JOBS} install-strip || \
@@ -303,8 +316,8 @@ if [ ! -z ${GCC_VERSION} ]; then
   ${SUDO} ${MAKE} -j${MAKE_JOBS} -C mpfr install
   CFLAGS="$TEMP_CFLAGS"
 
-  ${SUDO} rm -f ${PREFIX}/${TARGET}/etc/gcc-*-installed
-  ${SUDO} touch ${PREFIX}/${TARGET}/etc/gcc-${GCC_VERSION}-installed
+  ${SUDO} rm -f ${destdir}${PREFIX}/${TARGET}/etc/gcc-*-installed
+  ${SUDO} touch ${destdir}${PREFIX}/${TARGET}/etc/gcc-${GCC_VERSION}-installed
 fi
 
 if [ ! -z ${DJGPP_VERSION} ]; then
@@ -324,17 +337,17 @@ if [ ! -z ${DJGPP_VERSION} ]; then
   cd ..
 
   echo "Installing djgpp libraries and utilities"
-  ${SUDO} cp -rp lib/* $PREFIX/${TARGET}/lib || exit 1
-  ${SUDO} cp -p hostbin/exe2coff.exe $PREFIX/bin/${TARGET}-exe2coff${EXE} || exit 1
-  ${SUDO} cp -p hostbin/djasm.exe $PREFIX/bin/${TARGET}-djasm${EXE} || exit 1
-  ${SUDO} cp -p hostbin/dxegen.exe  $PREFIX/bin/${TARGET}-dxegen${EXE} || exit 1
-  ${SUDO} ln -sf $PREFIX/bin/${TARGET}-dxegen${EXE} $PREFIX/bin/${TARGET}-dxe3gen${EXE} || exit 1
-  ${SUDO} cp -p hostbin/dxe3res.exe $PREFIX/bin/${TARGET}-dxe3res${EXE} || exit 1
-  ${SUDO} mkdir -p ${PREFIX}/${TARGET}/share/info
-  ${SUDO} cp -rp info/* ${PREFIX}/${TARGET}/share/info
+  ${SUDO} cp -rp lib/* ${destdir}$PREFIX/${TARGET}/lib || exit 1
+  ${SUDO} cp -p hostbin/exe2coff.exe ${destdir}$PREFIX/bin/${TARGET}-exe2coff${EXE} || exit 1
+  ${SUDO} cp -p hostbin/djasm.exe ${destdir}$PREFIX/bin/${TARGET}-djasm${EXE} || exit 1
+  ${SUDO} cp -p hostbin/dxegen.exe  ${destdir}$PREFIX/bin/${TARGET}-dxegen${EXE} || exit 1
+  ${SUDO} ln -sf $PREFIX/bin/${TARGET}-dxegen${EXE} ${destdir}$PREFIX/bin/${TARGET}-dxe3gen${EXE} || exit 1
+  ${SUDO} cp -p hostbin/dxe3res.exe ${destdir}$PREFIX/bin/${TARGET}-dxe3res${EXE} || exit 1
+  ${SUDO} mkdir -p ${destdir}${PREFIX}/${TARGET}/share/info
+  ${SUDO} cp -rp info/* ${destdir}${PREFIX}/${TARGET}/share/info
 
-  ${SUDO} rm -f ${PREFIX}/${TARGET}/etc/djgpp-*-installed
-  ${SUDO} touch ${PREFIX}/${TARGET}/etc/djgpp-${DJGPP_VERSION}-installed
+  ${SUDO} rm -f ${destdir}${PREFIX}/${TARGET}/etc/djgpp-*-installed
+  ${SUDO} touch ${destdir}${PREFIX}/${TARGET}/etc/djgpp-${DJGPP_VERSION}-installed
 fi
 
 cd ${BASE}/build

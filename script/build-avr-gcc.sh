@@ -13,8 +13,8 @@ if [ ! -z ${AVRLIBC_VERSION} ]; then
   #${SUDO} mkdir -p ${PREFIX}/${TARGET}/sys-include/
   #${SUDO} cp -rv include/* ${PREFIX}/${TARGET}/sys-include/ | exit 1
   echo "Installing avr-libc documentation"
-  ${SUDO} mkdir -p ${PREFIX}/${TARGET}/share/man/
-  ${SUDO} cp -rv man/* ${PREFIX}/${TARGET}/share/man/ | exit 1
+  ${SUDO} mkdir -p ${destdir}${PREFIX}/${TARGET}/share/man/
+  ${SUDO} cp -rv man/* ${destdir}${PREFIX}/${TARGET}/share/man/ | exit 1
   cd ..
 fi
 
@@ -99,6 +99,6 @@ if [ ! -z ${GCC_VERSION} ]; then
   ${SUDO} ${MAKE} -j${MAKE_JOBS} install-strip || exit 1
   ${SUDO} ${MAKE} -j${MAKE_JOBS} -C mpfr install
   
-  ${SUDO} rm -f ${PREFIX}/${TARGET}/etc/gcc-*-installed
-  ${SUDO} touch ${PREFIX}/${TARGET}/etc/gcc-${GCC_VERSION}-installed
+  ${SUDO} rm -f ${destdir}${PREFIX}/${TARGET}/etc/gcc-*-installed
+  ${SUDO} touch ${destdir}${PREFIX}/${TARGET}/etc/gcc-${GCC_VERSION}-installed
 fi
