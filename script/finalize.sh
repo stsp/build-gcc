@@ -1,3 +1,5 @@
+test -n "$DJGPP_VERSION" || return
+
 echo "Copy long name executables to short name."
 (
   cd $PREFIX || exit 1
