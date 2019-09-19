@@ -59,8 +59,10 @@ if [ ! -d ${PREFIX} ] || [ ! -w ${PREFIX} ]; then
   SUDO=sudo
 fi
 
-echo "If you wish to change anything, press CTRL-C now. Otherwise, press any other key to continue."
-read -s -n 1
+if [ -z ${QUIET} ]; then
+  echo "If you wish to change anything, press CTRL-C now. Otherwise, press any other key to continue."
+  read -s -n 1
+fi
 
 # check required programs
 REQ_PROG_LIST="${CXX} ${CC} unzip bison flex ${MAKE} makeinfo patch tar xz bunzip2 gunzip"
