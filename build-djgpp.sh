@@ -156,11 +156,11 @@ if [ -n "${DJGPP_VERSION}" ]; then
   esac
 
   echo "Installing djgpp headers (stage 1)"
-  ${SUDO} mkdir -p ${BUILDDIR}/tmpinst$PREFIX/${TARGET}/sys-include || exit 1
-  ${SUDO} cp -rp include/* ${BUILDDIR}/tmpinst$PREFIX/${TARGET}/sys-include/ || exit 1
-  ${SUDO} mkdir -p ${BUILDDIR}/tmpinst$PREFIX/bin || exit 1
-  ${SUDO} cp -p hostbin/stubify.exe ${BUILDDIR}/tmpinst$PREFIX/bin/${TARGET}-stubify${EXE} || exit 1
-  ${SUDO} cp -p hostbin/stubedit.exe ${BUILDDIR}/tmpinst$PREFIX/bin/${TARGET}-stubedit${EXE} || exit 1
+  mkdir -p ${BUILDDIR}/tmpinst$PREFIX/${TARGET}/sys-include || exit 1
+  cp -rp include/* ${BUILDDIR}/tmpinst$PREFIX/${TARGET}/sys-include/ || exit 1
+  mkdir -p ${BUILDDIR}/tmpinst$PREFIX/bin || exit 1
+  cp -p hostbin/stubify.exe ${BUILDDIR}/tmpinst$PREFIX/bin/${TARGET}-stubify${EXE} || exit 1
+  cp -p hostbin/stubedit.exe ${BUILDDIR}/tmpinst$PREFIX/bin/${TARGET}-stubedit${EXE} || exit 1
   echo "Installing djgpp headers (stage 2)"
   ${SUDO} mkdir -p ${destdir}$PREFIX/${TARGET}/sys-include || exit 1
   ${SUDO} cp -rp include/* ${destdir}$PREFIX/${TARGET}/sys-include/ || exit 1
@@ -249,11 +249,11 @@ if [ ! -z ${GCC_VERSION} ]; then
 
   echo "Building gcc (stage 1)"
 
-  mkdir -p djcross
-  cd djcross || exit 1
-
   TEMP_CFLAGS="$CFLAGS"
   export CFLAGS="$CFLAGS $GCC_EXTRA_CFLAGS"
+
+  mkdir -p djcross
+  cd djcross || exit 1
 
   GCC_CONFIGURE_OPTIONS+=" --target=${TARGET} ${HOST_FLAG} ${BUILD_FLAG}
                            --enable-languages=${ENABLE_LANGUAGES}"
@@ -265,15 +265,32 @@ if [ ! -z ${GCC_VERSION} ]; then
     echo ${GCC_CONFIGURE_OPTIONS} > configure-prefix
   else
     echo "Note: gcc already configured. To force a rebuild, use: rm -rf $(pwd)"
-    sleep 5
   fi
-
-  mkdir -p $BUILDDIR/tmpinst/bin
-  cp ${destdir}$PREFIX/bin/${TARGET}-stubify $BUILDDIR/tmpinst/bin/stubify || exit 1
 
   ${MAKE} -j${MAKE_JOBS} all-gcc || exit 1
   echo "Installing gcc (stage 1)"
   ${SUDO} ${MAKE} -j${MAKE_JOBS} install-gcc || exit 1
+
+  cd $SRCDIR
+
+  mkdir -p djcross-stage2
+  cd djcross-stage2 || exit 1
+
+  GCC_CONFIGURE_OPTIONS+=" --target=${TARGET} ${HOST_FLAG} ${BUILD_FLAG}
+                           --enable-languages=${ENABLE_LANGUAGES}"
+  strip_whitespace GCC_CONFIGURE_OPTIONS
+
+  if [ ! -e configure-prefix ] || [ ! "`cat configure-prefix`" == "${GCC_CONFIGURE_OPTIONS}" ]; then
+    rm -rf *
+    eval "../gnu/gcc-${GCC_VERSION}/configure --prefix=${PREFIX} ${GCC_CONFIGURE_OPTIONS}" || exit 1
+    echo ${GCC_CONFIGURE_OPTIONS} > configure-prefix
+  else
+    echo "Note: gcc already configured. To force a rebuild, use: rm -rf $(pwd)"
+  fi
+
+  ${MAKE} -j${MAKE_JOBS} all-gcc || exit 1
+  echo "Installing gcc (stage 1)"
+  ${SUDO} ${MAKE} -j${MAKE_JOBS} install-gcc DESTDIR=${destdir} || exit 1
 
   export CFLAGS="$TEMP_CFLAGS"
 fi
@@ -291,8 +308,8 @@ if [ ! -z ${DJGPP_VERSION} ]; then
   ${MAKE} -j${MAKE_JOBS} -C libc || exit 1
 
   echo "Installing djgpp libc (stage 1)"
-  ${SUDO} mkdir -p $BUILDDIR/tmpinst${PREFIX}/${TARGET}/lib
-  ${SUDO} cp -rp ../lib/* $BUILDDIR/tmpinst$PREFIX/${TARGET}/lib || exit 1
+  mkdir -p $BUILDDIR/tmpinst${PREFIX}/${TARGET}/lib
+  cp -rp ../lib/* $BUILDDIR/tmpinst$PREFIX/${TARGET}/lib || exit 1
   CFLAGS="$TEMP_CFLAGS"
   echo "Installing djgpp libc (stage 2)"
   ${SUDO} mkdir -p ${destdir}${PREFIX}/${TARGET}/lib
@@ -311,9 +328,9 @@ if [ ! -z ${GCC_VERSION} ]; then
   ${MAKE} || exit 1
   [ ! -z $MAKE_CHECK_GCC ] && ${MAKE} -j${MAKE_JOBS} -s check-gcc | tee ${BASE}/tests/gcc.log
   echo "Installing gcc (stage 2)"
-  ${SUDO} ${MAKE} -j${MAKE_JOBS} install-strip || \
-  ${SUDO} ${MAKE} -j${MAKE_JOBS} install-strip || exit 1
-  ${SUDO} ${MAKE} -j${MAKE_JOBS} -C mpfr install
+  ${MAKE} -j${MAKE_JOBS} install-strip || exit 1
+  ${SUDO} ${MAKE} -j${MAKE_JOBS} install-strip DESTDIR=${destdir} prefix=${PREFIX} || exit 1
+  ${SUDO} ${MAKE} -j${MAKE_JOBS} -C mpfr install DESTDIR=${destdir} prefix=${PREFIX}
   CFLAGS="$TEMP_CFLAGS"
 
   ${SUDO} rm -f ${destdir}${PREFIX}/${TARGET}/etc/gcc-*-installed
@@ -354,4 +371,4 @@ cd ${BASE}/build
 
 source ${BASE}/script/build-gdb.sh
 
-source ${BASE}/script/finalize.sh
+#source ${BASE}/script/finalize.sh
