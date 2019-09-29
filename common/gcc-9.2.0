@@ -4,6 +4,7 @@ export GCC_VERSION=9.2.0
 export GCC_VERSION_SHORT=9.20
 export AUTOCONF_VERSION=2.69
 export AUTOMAKE_VERSION=1.15.1
+export BINUTILS_VERSION=232
 
 # tarball location
 export GCC_ARCHIVE="http://ftpmirror.gnu.org/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.xz"
