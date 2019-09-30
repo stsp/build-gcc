@@ -272,7 +272,8 @@ if [ ! -z ${GCC_VERSION} ]; then
   cd djcross-stage2 || exit 1
 
   GCC_CONFIGURE_OPTIONS_2="$GCC_CONFIGURE_OPTIONS --target=${TARGET} ${HOST_FLAG} ${BUILD_FLAG}
-                           --enable-languages=${ENABLE_LANGUAGES} --prefix=${PREFIX}"
+                           --enable-languages=${ENABLE_LANGUAGES} --prefix=${PREFIX}
+                           --with-build-time-tools=$BUILDDIR/tmpinst${PREFIX}"
   strip_whitespace GCC_CONFIGURE_OPTIONS_2
 
   if [ ! -e configure-prefix ] || [ ! "`cat configure-prefix`" == "${GCC_CONFIGURE_OPTIONS_2}" ]; then
@@ -313,19 +314,28 @@ if [ ! -z ${DJGPP_VERSION} ]; then
 fi
 
 if [ ! -z ${GCC_VERSION} ]; then
-  echo "Building gcc (stage 2)"
-  cd $SRCDIR/djcross || exit 1
-
   TEMP_CFLAGS="$CFLAGS"
   export CFLAGS="$CFLAGS $GCC_EXTRA_CFLAGS"
+
+  echo "Building gcc (stage 2.1)"
+  cd $SRCDIR/djcross || exit 1
 #  ${MAKE} -j${MAKE_JOBS} || exit 1
   # parallel build doesn't seem to work here
   ${MAKE} || exit 1
-  [ ! -z $MAKE_CHECK_GCC ] && ${MAKE} -j${MAKE_JOBS} -s check-gcc | tee ${BASE}/tests/gcc.log
+  echo "Installing gcc (stage 2.1)"
+  ${MAKE} -j${MAKE_JOBS} install-strip || exit 1
+  ${MAKE} -j${MAKE_JOBS} install-strip || exit 1
+  ${MAKE} -j${MAKE_JOBS} -C mpfr install
+
+  echo "Building gcc (stage 2.2)"
+  cd $SRCDIR/djcross-stage2 || exit 1
+#  ${MAKE} -j${MAKE_JOBS} || exit 1
+  # parallel build doesn't seem to work here
+  ${MAKE} || exit 1
   echo "Installing gcc (stage 2)"
   ${MAKE} -j${MAKE_JOBS} install-strip || exit 1
-  ${SUDO} ${MAKE} -j${MAKE_JOBS} install-strip DESTDIR=${destdir} prefix=${PREFIX} || exit 1
-  ${SUDO} ${MAKE} -j${MAKE_JOBS} -C mpfr install DESTDIR=${destdir} prefix=${PREFIX}
+  ${SUDO} ${MAKE} -j${MAKE_JOBS} install-strip DESTDIR=${destdir} || exit 1
+  ${SUDO} ${MAKE} -j${MAKE_JOBS} -C mpfr install DESTDIR=${destdir}
   CFLAGS="$TEMP_CFLAGS"
 
   ${SUDO} rm -f ${destdir}${PREFIX}/${TARGET}/etc/gcc-*-installed
