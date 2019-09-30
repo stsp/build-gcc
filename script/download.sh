@@ -56,12 +56,9 @@ if [ ! -d ${destdir}${PREFIX} ] || [ ! -w ${destdir}${PREFIX} ]; then
   echo "WARNING: no write access to ${destdir}${PREFIX}."
   echo "You may need to enter your sudo password several times during the build process."
   echo ""
-  SUDO=sudo
-fi
-
-if [ -z ${QUIET} ]; then
   echo "If you wish to change anything, press CTRL-C now. Otherwise, press any other key to continue."
   read -s -n 1
+  SUDO=sudo
 fi
 
 # check required programs
