@@ -250,14 +250,14 @@ if [ ! -z ${GCC_VERSION} ]; then
   mkdir -p djcross
   cd djcross || exit 1
 
-  GCC_CONFIGURE_OPTIONS+=" --target=${TARGET} ${HOST_FLAG} ${BUILD_FLAG}
-                           --enable-languages=${ENABLE_LANGUAGES}"
-  strip_whitespace GCC_CONFIGURE_OPTIONS
+  GCC_CONFIGURE_OPTIONS_1="$GCC_CONFIGURE_OPTIONS --target=${TARGET} ${HOST_FLAG} ${BUILD_FLAG}
+                           --enable-languages=${ENABLE_LANGUAGES} --prefix=$BUILDDIR/tmpinst${PREFIX}"
+  strip_whitespace GCC_CONFIGURE_OPTIONS_1
 
-  if [ ! -e configure-prefix ] || [ ! "`cat configure-prefix`" == "${GCC_CONFIGURE_OPTIONS}" ]; then
+  if [ ! -e configure-prefix ] || [ ! "`cat configure-prefix`" == "${GCC_CONFIGURE_OPTIONS_1}" ]; then
     rm -rf *
-    eval "../gnu/gcc-${GCC_VERSION}/configure --prefix=$BUILDDIR/tmpinst${PREFIX} ${GCC_CONFIGURE_OPTIONS}" || exit 1
-    echo ${GCC_CONFIGURE_OPTIONS} > configure-prefix
+    eval "../gnu/gcc-${GCC_VERSION}/configure ${GCC_CONFIGURE_OPTIONS_1}" || exit 1
+    echo ${GCC_CONFIGURE_OPTIONS_1} > configure-prefix
   else
     echo "Note: gcc already configured. To force a rebuild, use: rm -rf $(pwd)"
   fi
@@ -271,14 +271,14 @@ if [ ! -z ${GCC_VERSION} ]; then
   mkdir -p djcross-stage2
   cd djcross-stage2 || exit 1
 
-  GCC_CONFIGURE_OPTIONS+=" --target=${TARGET} ${HOST_FLAG} ${BUILD_FLAG}
-                           --enable-languages=${ENABLE_LANGUAGES}"
-  strip_whitespace GCC_CONFIGURE_OPTIONS
+  GCC_CONFIGURE_OPTIONS_2="$GCC_CONFIGURE_OPTIONS --target=${TARGET} ${HOST_FLAG} ${BUILD_FLAG}
+                           --enable-languages=${ENABLE_LANGUAGES} --prefix=${PREFIX}"
+  strip_whitespace GCC_CONFIGURE_OPTIONS_2
 
-  if [ ! -e configure-prefix ] || [ ! "`cat configure-prefix`" == "${GCC_CONFIGURE_OPTIONS}" ]; then
+  if [ ! -e configure-prefix ] || [ ! "`cat configure-prefix`" == "${GCC_CONFIGURE_OPTIONS_2}" ]; then
     rm -rf *
-    eval "../gnu/gcc-${GCC_VERSION}/configure --prefix=${PREFIX} ${GCC_CONFIGURE_OPTIONS}" || exit 1
-    echo ${GCC_CONFIGURE_OPTIONS} > configure-prefix
+    eval "../gnu/gcc-${GCC_VERSION}/configure ${GCC_CONFIGURE_OPTIONS_2}" || exit 1
+    echo ${GCC_CONFIGURE_OPTIONS_2} > configure-prefix
   else
     echo "Note: gcc already configured. To force a rebuild, use: rm -rf $(pwd)"
   fi
