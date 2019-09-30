@@ -358,7 +358,7 @@ if [ ! -z ${DJGPP_VERSION} ]; then
   ${SUDO} cp -p hostbin/exe2coff.exe ${destdir}$PREFIX/bin/${TARGET}-exe2coff${EXE} || exit 1
   ${SUDO} cp -p hostbin/djasm.exe ${destdir}$PREFIX/bin/${TARGET}-djasm${EXE} || exit 1
   ${SUDO} cp -p hostbin/dxegen.exe  ${destdir}$PREFIX/bin/${TARGET}-dxegen${EXE} || exit 1
-  ${SUDO} ln -sf $PREFIX/bin/${TARGET}-dxegen${EXE} ${destdir}$PREFIX/bin/${TARGET}-dxe3gen${EXE} || exit 1
+  ${SUDO} ln -sf ${TARGET}-dxegen${EXE} ${destdir}$PREFIX/bin/${TARGET}-dxe3gen${EXE} || exit 1
   ${SUDO} cp -p hostbin/dxe3res.exe ${destdir}$PREFIX/bin/${TARGET}-dxe3res${EXE} || exit 1
   ${SUDO} mkdir -p ${destdir}${PREFIX}/${TARGET}/share/info
   ${SUDO} cp -rp info/* ${destdir}${PREFIX}/${TARGET}/share/info
