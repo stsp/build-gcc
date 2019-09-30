@@ -2,11 +2,6 @@
 
 source script/init.sh
 
-case $TARGET in
-*-msdosdjgpp) ;;
-*) TARGET="i586-pc-msdosdjgpp" ;;
-esac
-
 export DJGPP_DOWNLOAD_BASE="http://www.mirrorservice.org/sites/ftp.delorie.com/pub"
 
 prepend BINUTILS_CONFIGURE_OPTIONS "--disable-werror
@@ -91,7 +86,7 @@ source ${BASE}/script/download.sh
 
 source ${BASE}/script/build-tools.sh
 
-cd ${BASE}/build/ || exit 1
+cd ${BASE}/$BLDSUF || exit 1
 BUILDDIR=`pwd`
 
 if [ ! -z ${BINUTILS_VERSION} ]; then
@@ -117,7 +112,7 @@ if [ ! -z ${BINUTILS_VERSION} ]; then
   source ${BASE}/script/build-binutils.sh
 fi
 
-cd ${BASE}/build/ || exit 1
+cd $BUILDDIR || exit 1
 
 if [ -n "${DJGPP_VERSION}" ]; then
   if [ "${DJGPP_VERSION}" == "cvs" ]; then
@@ -169,7 +164,7 @@ if [ -n "${DJGPP_VERSION}" ]; then
   ${SUDO} cp -p hostbin/stubedit.exe ${destdir}$PREFIX/bin/${TARGET}-stubedit${EXE} || exit 1
 fi
 
-cd ${BASE}/build/
+cd $BUILDDIR
 
 if [ ! -z ${GCC_VERSION} ]; then
   # build gcc
@@ -299,7 +294,7 @@ fi
 
 if [ ! -z ${DJGPP_VERSION} ]; then
   echo "Building djgpp libc"
-  cd ${BASE}/build/djgpp-${DJGPP_VERSION}/src
+  cd $BUILDDIR/djgpp-${DJGPP_VERSION}/src
   TEMP_CFLAGS="$CFLAGS"
   export CFLAGS="$CFLAGS_FOR_TARGET"
   sed -i 's/Werror/Wno-error/' makefile.cfg
@@ -339,7 +334,7 @@ fi
 
 if [ ! -z ${DJGPP_VERSION} ]; then
   echo "Building djgpp libraries"
-  cd ${BASE}/build/djgpp-${DJGPP_VERSION}/src
+  cd $BUILDDIR/djgpp-${DJGPP_VERSION}/src
   TEMP_CFLAGS="$CFLAGS"
   export CFLAGS="$CFLAGS_FOR_TARGET"
   ${MAKE} -j${MAKE_JOBS} -C utils native || exit 1

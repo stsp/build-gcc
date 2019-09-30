@@ -2,9 +2,6 @@ unset CDPATH
 
 BASE=`pwd`
 
-# target directory
-PREFIX=${PREFIX-/usr/local/cross}
-
 # enabled languages
 #ENABLE_LANGUAGES=${ENABLE_LANGUAGES-c,c++,f95,objc,obj-c++}
 ENABLE_LANGUAGES=${ENABLE_LANGUAGES-c,c++}
