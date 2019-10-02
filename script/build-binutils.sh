@@ -25,7 +25,9 @@ esac
 ${MAKE} -j${MAKE_JOBS} || exit 1
 [ ! -z $MAKE_CHECK ] && ${MAKE} -j${MAKE_JOBS} -s check | tee ${BASE}/tests/binutils.log
 echo "Installing binutils"
-${SUDO} ${MAKE} -j${MAKE_JOBS} install || exit 1
+${MAKE} -j${MAKE_JOBS} install || exit 1
+# HACK: assume they don't care about the prefix
+${SUDO} ${MAKE} -j${MAKE_JOBS} install DESTDIR=${destdir} prefix=${PREFIX} || exit 1
 
 ${SUDO} rm -f ${destdir}${PREFIX}/${TARGET}/etc/binutils-*-installed
 ${SUDO} touch ${destdir}${PREFIX}/${TARGET}/etc/binutils-${BINUTILS_VERSION}-installed
