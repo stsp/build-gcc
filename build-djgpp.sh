@@ -156,12 +156,18 @@ if [ -n "${DJGPP_VERSION}" ]; then
   mkdir -p ${BUILDDIR}/tmpinst$PREFIX/bin || exit 1
   cp -p hostbin/stubify.exe ${BUILDDIR}/tmpinst$PREFIX/bin/${TARGET}-stubify${EXE} || exit 1
   cp -p hostbin/stubedit.exe ${BUILDDIR}/tmpinst$PREFIX/bin/${TARGET}-stubedit${EXE} || exit 1
+  mkdir -p ${BUILDDIR}/tmpinst$PREFIX/${TARGET}/bin || exit 1
+  cp -p hostbin/stubify.exe ${BUILDDIR}/tmpinst$PREFIX/${TARGET}/bin/stubify${EXE} || exit 1
+  cp -p hostbin/stubedit.exe ${BUILDDIR}/tmpinst$PREFIX/${TARGET}/bin/stubedit${EXE} || exit 1
   echo "Installing djgpp headers (stage 2)"
   ${SUDO} mkdir -p ${destdir}$PREFIX/${TARGET}/sys-include || exit 1
   ${SUDO} cp -rp include/* ${destdir}$PREFIX/${TARGET}/sys-include/ || exit 1
   ${SUDO} mkdir -p ${destdir}$PREFIX/bin || exit 1
   ${SUDO} cp -p hostbin/stubify.exe ${destdir}$PREFIX/bin/${TARGET}-stubify${EXE} || exit 1
   ${SUDO} cp -p hostbin/stubedit.exe ${destdir}$PREFIX/bin/${TARGET}-stubedit${EXE} || exit 1
+  ${SUDO} mkdir -p ${destdir}$PREFIX/${TARGET}/bin || exit 1
+  ${SUDO} cp -p hostbin/stubify.exe ${destdir}$PREFIX/${TARGET}/bin/stubify${EXE} || exit 1
+  ${SUDO} cp -p hostbin/stubedit.exe ${destdir}$PREFIX/${TARGET}/bin/stubedit${EXE} || exit 1
 fi
 
 cd $BUILDDIR
