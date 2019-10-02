@@ -293,10 +293,6 @@ if [ ! -z ${GCC_VERSION} ]; then
     echo "Note: gcc already configured. To force a rebuild, use: rm -rf $(pwd)"
   fi
 
-  ${MAKE} -j${MAKE_JOBS} all-gcc || exit 1
-  echo "Installing gcc (stage 1)"
-  ${SUDO} ${MAKE} -j${MAKE_JOBS} install-gcc DESTDIR=${destdir} || exit 1
-
   export CFLAGS="$TEMP_CFLAGS"
 fi
 
@@ -328,21 +324,16 @@ if [ ! -z ${GCC_VERSION} ]; then
 
   echo "Building gcc (stage 2.1)"
   cd $SRCDIR/djcross || exit 1
-#  ${MAKE} -j${MAKE_JOBS} || exit 1
-  # parallel build doesn't seem to work here
-  ${MAKE} || exit 1
+  ${MAKE} -j${MAKE_JOBS} || exit 1
   echo "Installing gcc (stage 2.1)"
-  ${MAKE} -j${MAKE_JOBS} install-strip || exit 1
   ${MAKE} -j${MAKE_JOBS} install-strip || exit 1
   ${MAKE} -j${MAKE_JOBS} -C mpfr install
 
   echo "Building gcc (stage 2.2)"
   cd $SRCDIR/djcross-stage2 || exit 1
-#  ${MAKE} -j${MAKE_JOBS} || exit 1
-  # parallel build doesn't seem to work here
-  ${MAKE} || exit 1
-  echo "Installing gcc (stage 2)"
-  ${MAKE} -j${MAKE_JOBS} install-strip || exit 1
+
+  ${MAKE} -j${MAKE_JOBS} || exit 1
+  echo "Installing gcc (stage 2.2)"
   ${SUDO} ${MAKE} -j${MAKE_JOBS} install-strip DESTDIR=${destdir} || exit 1
   ${SUDO} ${MAKE} -j${MAKE_JOBS} -C mpfr install DESTDIR=${destdir}
   CFLAGS="$TEMP_CFLAGS"
@@ -385,4 +376,4 @@ cd ${BASE}/build
 
 source ${BASE}/script/build-gdb.sh
 
-#source ${BASE}/script/finalize.sh
+source ${BASE}/script/finalize.sh
