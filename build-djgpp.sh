@@ -236,8 +236,12 @@ if [ ! -z ${GCC_VERSION} ]; then
     # download mpc/gmp/mpfr/isl libraries
     echo "Downloading gcc dependencies"
     cd gnu/gcc-${GCC_VERSION} || exit 1
-    sed -i 's/ftp/http/' contrib/download_prerequisites
-    ./contrib/download_prerequisites || exit 1
+    if [ -f "${BASE}/download/gcc-${GCC_VERSION}-dep/download_prerequisites" ]; then
+      cp -f ${BASE}/download/gcc-${GCC_VERSION}-dep/download_prerequisites contrib
+    else
+      sed -i 's/ftp/http/' contrib/download_prerequisites
+    fi
+    source ./contrib/download_prerequisites || exit 1
 
     # apply extra patches if necessary
     [ -e ${BASE}/patch/patch-djgpp-gcc-${GCC_VERSION}.txt ] && patch -p 1 -u -i ${BASE}/patch/patch-djgpp-gcc-${GCC_VERSION}.txt
