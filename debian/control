@@ -1,0 +1,18 @@
+Source: djgpp
+Section: devel
+Priority: optional
+Maintainer: Stas Sergeev <stsp@users.sourceforge.net>
+Standards-Version: 3.9.7
+Build-Depends:
+    bash,
+    make,
+    autoconf,
+    automake,
+    debhelper (>= 9~)
+Homepage: http://www.github.com/stsp/build-gcc
+
+Package: djgpp
+Architecture: i386 amd64
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: gcc cross-compiler for DOS
+ djgpp is a gcc cross-compiler for DOS target.

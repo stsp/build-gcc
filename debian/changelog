@@ -1,0 +1,5 @@
+djgpp (9.2.0-1) disco; urgency=low
+
+  * gcc 9.2.0
+
+ -- Stas Sergeev <stsp@users.sourceforge.net>  Wed, 2 Oct 2019 23:00:00 +0300
