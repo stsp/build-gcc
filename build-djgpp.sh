@@ -241,6 +241,9 @@ if [ ! -z ${GCC_VERSION} ]; then
 
     # apply extra patches if necessary
     [ -e ${BASE}/patch/patch-djgpp-gcc-${GCC_VERSION}.txt ] && patch -p 1 -u -i ${BASE}/patch/patch-djgpp-gcc-${GCC_VERSION}.txt
+    patch -p0 < ${BASE}/patch/patch-gcc-config.txt || exit 1
+    # need to autoconf after patching config
+    autoconf || exit 1
     cd -
 
     touch gcc-unpacked

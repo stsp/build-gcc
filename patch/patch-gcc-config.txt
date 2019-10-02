@@ -1,0 +1,17 @@
+--- config/acx.m4.old	2018-04-18 12:46:58.000000000 +0300
++++ config/acx.m4	2019-10-02 17:13:00.477433682 +0300
+@@ -527,12 +527,12 @@
+     *" patsubst([$4], [/.*], []) "*) ;;
+     *) ok=no ;;
+   esac
+-  ifelse([$5],,, 
++  ifelse([$5],,,
+   [case ,${enable_languages}, in
+     *,$5,*) ;;
+     *) ok=no ;;
+   esac])
+-  if test $ok = yes; then
++  if test $ok = yes && test -z "$with_build_time_tools"; then
+     # An in-tree tool is available and we can use it
+     $2='$$r/$(HOST_SUBDIR)/$4'
+     AC_MSG_RESULT(just compiled)
