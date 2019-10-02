@@ -273,7 +273,7 @@ if [ ! -z ${GCC_VERSION} ]; then
 
   ${MAKE} -j${MAKE_JOBS} all-gcc || exit 1
   echo "Installing gcc (stage 1)"
-  ${SUDO} ${MAKE} -j${MAKE_JOBS} install-gcc || exit 1
+  ${MAKE} -j${MAKE_JOBS} install-gcc || exit 1
 
   cd $SRCDIR
 

@@ -74,7 +74,6 @@ if [ ! -z ${NEWLIB_VERSION} ]; then
   ${MAKE} -j${MAKE_JOBS} || exit 1
   [ ! -z $MAKE_CHECK ] && ${MAKE} -j${MAKE_JOBS} -s check | tee ${BASE}/tests/newlib.log
   echo "Installing newlib"
-  ${SUDO} ${MAKE} -j${MAKE_JOBS} install || \
   ${SUDO} ${MAKE} -j${MAKE_JOBS} install || exit 1
 fi
 
@@ -87,10 +86,9 @@ if [ ! -z ${GCC_VERSION} ]; then
   ${MAKE} -j${MAKE_JOBS} || exit 1
   [ ! -z $MAKE_CHECK_GCC ] && ${MAKE} -j${MAKE_JOBS} -s check-gcc | tee ${BASE}/tests/gcc.log
   echo "Installing gcc"
-  ${SUDO} ${MAKE} -j${MAKE_JOBS} install-strip || \
   ${SUDO} ${MAKE} -j${MAKE_JOBS} install-strip || exit 1
   ${SUDO} ${MAKE} -j${MAKE_JOBS} -C mpfr install
-  
+
   ${SUDO} rm -f ${destdir}${PREFIX}/${TARGET}/etc/gcc-*-installed
   ${SUDO} touch ${destdir}${PREFIX}/${TARGET}/etc/gcc-${GCC_VERSION}-installed
 fi

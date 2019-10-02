@@ -55,7 +55,7 @@ if [ ! -z ${GCC_VERSION} ]; then
 
   ${MAKE} -j${MAKE_JOBS} all-gcc || exit 1
   echo "Installing gcc (stage 1)"
-  ${SUDO} ${MAKE} -j${MAKE_JOBS} install-gcc || exit 1
+  ${MAKE} -j${MAKE_JOBS} install-gcc || exit 1
 
   export CFLAGS="$TEMP_CFLAGS"
 fi
@@ -93,7 +93,6 @@ if [ ! -z ${GCC_VERSION} ]; then
   ${MAKE} -j${MAKE_JOBS} || exit 1
   [ ! -z $MAKE_CHECK_GCC ] && ${MAKE} -j${MAKE_JOBS} -s check-gcc | tee ${BASE}/tests/gcc.log
   echo "Installing gcc"
-  ${SUDO} ${MAKE} -j${MAKE_JOBS} install-strip || \
   ${SUDO} ${MAKE} -j${MAKE_JOBS} install-strip || exit 1
   ${SUDO} ${MAKE} -j${MAKE_JOBS} -C mpfr install
   

@@ -33,7 +33,7 @@ esac
 
 echo "Installing setenv-${TARGET}"
 ${SUDO} cp ${BASE}/build/setenv-${TARGET} ${destdir}${PREFIX}/
-cp ${BASE}/build/setenv-${TARGET}.bat ${destdir}${PREFIX}/ 2> /dev/null
+${SUDO} cp ${BASE}/build/setenv-${TARGET}.bat ${destdir}${PREFIX}/ 2> /dev/null
 
 cd ${BASE}/build
 
