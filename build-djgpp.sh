@@ -339,7 +339,8 @@ if [ ! -z ${GCC_VERSION} ]; then
   ${MAKE} -j${MAKE_JOBS} || exit 1
   echo "Installing gcc (stage 2.2)"
   ${SUDO} ${MAKE} -j${MAKE_JOBS} install-strip DESTDIR=${destdir} || exit 1
-  ${SUDO} ${MAKE} -j${MAKE_JOBS} -C mpfr install DESTDIR=${destdir}
+  # for some reason it creates include dir
+  ${SUDO} rm -rf ${destdir}${PREFIX}/include
   CFLAGS="$TEMP_CFLAGS"
 
   ${SUDO} rm -f ${destdir}${PREFIX}/${TARGET}/etc/gcc-*-installed
