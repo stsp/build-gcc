@@ -180,36 +180,6 @@ if [ ! -z ${GCC_VERSION} ]; then
 
   export PATH="${BUILDDIR}/tmpinst/bin:${BUILDDIR}/tmpinst${PREFIX}/bin:$PATH"
 
-  if [ ! -e ${BUILDDIR}/tmpinst/autoconf-${AUTOCONF_VERSION}-built ]; then
-    echo "Building autoconf"
-    cd $SRCDIR
-    untar ${AUTOCONF_ARCHIVE} || exit 1
-    cd autoconf-${AUTOCONF_VERSION}/
-    ./configure --prefix=$BUILDDIR/tmpinst || exit 1
-    ${MAKE} -j${MAKE_JOBS} all || exit 1
-    ${MAKE} -j${MAKE_JOBS} install || exit 1
-    rm ${BUILDDIR}/tmpinst/autoconf-*-built
-    touch ${BUILDDIR}/tmpinst/autoconf-${AUTOCONF_VERSION}-built
-  else
-    echo "autoconf already built, skipping."
-  fi
-
-  if [ ! -e ${BUILDDIR}/tmpinst/automake-${AUTOMAKE_VERSION}-built ]; then
-    echo "Building automake"
-    cd $SRCDIR
-    untar ${AUTOMAKE_ARCHIVE} || exit 1
-    cd automake-${AUTOMAKE_VERSION}/
-    ./configure --prefix=$BUILDDIR/tmpinst || exit 1
-    ${MAKE} all || exit 1
-    ${MAKE} install || exit 1
-    rm ${BUILDDIR}/tmpinst/automake-*-built
-    touch ${BUILDDIR}/tmpinst/automake-${AUTOMAKE_VERSION}-built
-  else
-    echo "automake already built, skipping."
-  fi
-
-  cd $SRCDIR
-
   if [ ! -e gcc-unpacked ]; then
     rm -rf $BUILDDIR/gnu/
 
