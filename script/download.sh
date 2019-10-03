@@ -103,7 +103,7 @@ rm test-zlib.exe 2>/dev/null
 
 # download source files
 ARCHIVE_LIST="$BINUTILS_ARCHIVE $DJCRX_ARCHIVE $DJLSR_ARCHIVE $DJDEV_ARCHIVE
-              $DJCROSS_GCC_ARCHIVE $GCC_ARCHIVE
+              $DJCROSS_GCC_ARCHIVE $GCC_ARCHIVE"
 
 echo "Download source files..."
 mkdir -p download || exit 1
