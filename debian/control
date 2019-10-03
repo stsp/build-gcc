@@ -18,6 +18,7 @@ Build-Depends:
     xz-utils,
     bzip2,
     gzip,
+    zlib1g-dev,
     debhelper (>= 9~)
 Homepage: http://www.github.com/stsp/build-gcc
 
