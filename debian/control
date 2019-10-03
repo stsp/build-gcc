@@ -10,6 +10,14 @@ Build-Depends:
     automake,
     unzip,
     wget,
+    bison,
+    flex,
+    texinfo,
+    patch,
+    tar,
+    xz-utils,
+    bzip2,
+    gzip,
     debhelper (>= 9~)
 Homepage: http://www.github.com/stsp/build-gcc
 
