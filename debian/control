@@ -8,6 +8,8 @@ Build-Depends:
     make,
     autoconf,
     automake,
+    unzip,
+    wget,
     debhelper (>= 9~)
 Homepage: http://www.github.com/stsp/build-gcc
 
