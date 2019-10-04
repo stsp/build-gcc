@@ -4,4 +4,4 @@
 	dh $@
 
 override_dh_auto_build:
-	CFLAGS= LDFLAGS= CPPFLAGS= CXXFLAGS= dh_auto_build $@ -- PREFIX=/usr
+	CFLAGS=-g3 LDFLAGS= CPPFLAGS= CXXFLAGS=-g3 dh_auto_build $@ -- PREFIX=/usr
