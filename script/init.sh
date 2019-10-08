@@ -28,18 +28,6 @@ fi
 
 export CC CXX MAKE
 
-[ ! -z ${BUILD} ] && BUILD_FLAG="--build=${BUILD}"
-if [ ! -z ${HOST} ]; then
-  HOST_FLAG="--host=${HOST}"
-  IGNORE_DEPENDENCIES=yes
-  HOST_CC=${HOST_CC-$HOST-$CC}
-  HOST_CXX=${HOST_CXX-$HOST-$CXX}
-else
-  HOST_FLAG=""
-  HOST_CC=${CC}
-  HOST_CXX=${CXX}
-fi
-
 untar()
 {
   local file=$(basename $1)

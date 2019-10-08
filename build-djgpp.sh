@@ -233,7 +233,7 @@ if [ ! -z ${GCC_VERSION} ]; then
   mkdir -p djcross
   cd djcross || exit 1
 
-  GCC_CONFIGURE_OPTIONS_1="$GCC_CONFIGURE_OPTIONS --target=${TARGET} ${HOST_FLAG} ${BUILD_FLAG}
+  GCC_CONFIGURE_OPTIONS_1="$GCC_CONFIGURE_OPTIONS --target=${TARGET}
                            --enable-languages=${ENABLE_LANGUAGES} --prefix=$BUILDDIR/tmpinst${PREFIX}"
   strip_whitespace GCC_CONFIGURE_OPTIONS_1
 
@@ -254,7 +254,7 @@ if [ ! -z ${GCC_VERSION} ]; then
   mkdir -p djcross-stage2
   cd djcross-stage2 || exit 1
 
-  GCC_CONFIGURE_OPTIONS_2="$GCC_CONFIGURE_OPTIONS --target=${TARGET} ${HOST_FLAG} ${BUILD_FLAG}
+  GCC_CONFIGURE_OPTIONS_2="$GCC_CONFIGURE_OPTIONS --target=${TARGET}
                            --enable-languages=${ENABLE_LANGUAGES} --prefix=${PREFIX}
                            --with-build-time-tools=$BUILDDIR/tmpinst${PREFIX}"
   strip_whitespace GCC_CONFIGURE_OPTIONS_2
