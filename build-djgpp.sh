@@ -311,6 +311,8 @@ if [ ! -z ${GCC_VERSION} ]; then
   ${SUDO} ${MAKE} -j${MAKE_JOBS} install-strip DESTDIR=${destdir} || exit 1
   # for some reason it creates include dir
   ${SUDO} rm -rf ${destdir}${PREFIX}/include
+  # remove man/info that can clash with other gcc ports
+  ${SUDO} rm -rf ${destdir}${PREFIX}/share
   CFLAGS="$TEMP_CFLAGS"
 
   ${SUDO} rm -f ${destdir}${PREFIX}/${TARGET}/etc/gcc-*-installed
