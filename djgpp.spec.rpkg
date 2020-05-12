@@ -1,0 +1,54 @@
+#
+# spec file for package djgpp
+#
+
+Name: {{{ git_dir_name }}}
+Version: {{{ git_dir_version }}}
+Release: 1%{?dist}
+Summary: 64-bit DOS
+
+Group: Development/Tools
+
+License: GPL-3.0+
+URL: https://github.com/stsp/build-gcc
+VCS: {{{ git_dir_vcs }}}
+Source: {{{ git_dir_archive }}}
+
+BuildRequires: gcc
+BuildRequires: bash
+BuildRequires: make
+BuildRequires: autoconf
+BuildRequires: automake
+BuildRequires: unzip
+BuildRequires: wget
+BuildRequires: bison
+BuildRequires: flex
+BuildRequires: texinfo
+BuildRequires: patch
+BuildRequires: tar
+BuildRequires: xz
+BuildRequires: bzip2
+BuildRequires: gzip
+BuildRequires: dos2unix
+BuildRequires: zlib-devel
+
+%description
+djgpp is a gcc cross-compiler for DOS target.
+
+%prep
+{{{ git_dir_setup_macro }}}
+
+%build
+make PREFIX=%{_prefix} %{?_smp_mflags}
+
+%check
+
+%install
+CFLAGS=-g3 LDFLAGS= CPPFLAGS= CXXFLAGS=-g3 make DESTDIR=%{buildroot} PREFIX=%{_prefix} install
+
+%files
+%defattr(-,root,root)
+%{_prefix}/*
+
+%changelog
+{{{ git_dir_changelog }}}
