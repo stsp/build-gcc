@@ -49,7 +49,10 @@ CFLAGS=-g3 LDFLAGS= CPPFLAGS= CXXFLAGS=-g3 make DESTDIR=%{buildroot} PREFIX=%{_p
 
 %files
 %defattr(-,root,root)
-%{_prefix}/*
+%{_bindir}/*
+%{_prefix}/i586-pc-msdosdjgpp/*
+%{_libexecdir}/gcc/i586-pc-msdosdjgpp/*
+%{_prefix}/lib/gcc/i586-pc-msdosdjgpp/*
 
 %changelog
 {{{ git_dir_changelog }}}
