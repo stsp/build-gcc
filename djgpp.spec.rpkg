@@ -12,7 +12,7 @@ Group: Development/Tools
 License: GPL-3.0+
 URL: https://github.com/stsp/build-gcc
 VCS: {{{ git_dir_vcs }}}
-Source: {{{ git_dir_archive }}}
+Source0: {{{ git_dir_archive }}}
 
 BuildRequires: gcc
 BuildRequires: gcc-c++
