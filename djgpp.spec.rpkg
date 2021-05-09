@@ -45,6 +45,7 @@ make PREFIX=%{_prefix} %{?_smp_mflags}
 %check
 
 %define __spec_install_post %{nil}
+%define __arch_install_post export NO_BRP_STRIP_DEBUG=true
 
 %install
 CFLAGS=-g3 LDFLAGS= CPPFLAGS= CXXFLAGS=-g3 make DESTDIR=%{buildroot} PREFIX=%{_prefix} install
