@@ -11,8 +11,6 @@ prepend BINUTILS_CONFIGURE_OPTIONS "--disable-werror
 prepend GCC_CONFIGURE_OPTIONS "--disable-nls
                                --disable-libquadmath-support
                                --enable-version-specific-runtime-libs
-                               --disable-fat
-                               --disable-lto
                                --enable-libstdcxx-filesystem-ts"
 
 prepend GDB_CONFIGURE_OPTIONS "--disable-werror
