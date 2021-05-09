@@ -9,9 +9,10 @@ prepend BINUTILS_CONFIGURE_OPTIONS "--disable-werror
                                     --disable-plugins"
 
 prepend GCC_CONFIGURE_OPTIONS "--disable-nls
-                               --enable-libquadmath-support
+                               --disable-libquadmath-support
                                --enable-version-specific-runtime-libs
-                               --enable-fat
+                               --disable-fat
+                               --disable-lto
                                --enable-libstdcxx-filesystem-ts"
 
 prepend GDB_CONFIGURE_OPTIONS "--disable-werror
