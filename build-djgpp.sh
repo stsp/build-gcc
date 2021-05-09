@@ -5,7 +5,8 @@ source script/init.sh
 export DJGPP_DOWNLOAD_BASE="http://www.mirrorservice.org/sites/ftp.delorie.com/pub"
 
 prepend BINUTILS_CONFIGURE_OPTIONS "--disable-werror
-                                    --disable-nls"
+                                    --disable-nls
+                                    --disable-plugins"
 
 prepend GCC_CONFIGURE_OPTIONS "--disable-nls
                                --enable-libquadmath-support
